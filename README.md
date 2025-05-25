@@ -1,25 +1,27 @@
-# Cloudflare Workers OpenAPI 3.1
+# Clash Filter
 
-This is a Cloudflare Worker with OpenAPI 3.1 using [chanfana](https://github.com/cloudflare/chanfana) and [Hono](https://github.com/honojs/hono).
+一个基于 Cloudflare Worker 的小工具，用来过滤 Clash 订阅中指定类型的节点。
 
-This is an example project made to be used as a quick start into building OpenAPI compliant Workers that generates the
-`openapi.json` schema automatically from code and validates the incoming request to the defined parameters or request body.
+## 动机
 
-## Get started
+不久前我入手了一台小米路由器 BE3600 开启了 SSH， 并安装了 ShellClash 用于全局透明代理。
 
-1. Sign up for [Cloudflare Workers](https://workers.dev). The free tier is more than enough for most use cases.
-2. Clone this project and install dependencies with `npm install`
-3. Run `wrangler login` to login to your Cloudflare account in wrangler
-4. Run `wrangler deploy` to publish the API to Cloudflare Workers
+有些机场的节点类型可能会包含 `vless`、`hysteria` 等协议，需要 clash meta 内核才能支持。
 
-## Project structure
+但由于该路由器内存有限（空闲时 40mb 左右），启用 clash meta 内核后，内存将很快被耗尽，导致路由器频繁崩溃重启。
 
-1. Your main router is defined in `src/index.ts`.
-2. Each endpoint has its own file in `src/endpoints/`.
-3. For more information read the [chanfana documentation](https://chanfana.pages.dev/) and [Hono documentation](https://hono.dev/docs).
+无奈，做了个小工具来过滤出 clash 内核支持的基础节点类型：`ss`, `ssr`, `trojan`, `vmess`, `socks5`, `http`, `snell`。
 
-## Development
+并且禁用了 `scripts`, `proxy-providers`, `rule-providers` 和 `rule-set` 等只有 clash meta 内核才有的高级特性。
 
-1. Run `wrangler dev` to start a local instance of the API.
-2. Open `http://localhost:8787/` in your browser to see the Swagger interface where you can try the endpoints.
-3. Changes made in the `src/` folder will automatically trigger the server to reload, you only need to refresh the Swagger interface.
+## 请求参数
+
+请求路径：`https://your-domain.com/api/clash`
+
+1. url：订阅地址
+2. include：要保留的节点类型，比如：`ss,trjan,vmess`
+3. exclude：要丢弃的节点类型，比如：`vless,hysteria`
+
+## License
+
+[MIT](LICENSE) License © 2025-PRESENT Del Wang
